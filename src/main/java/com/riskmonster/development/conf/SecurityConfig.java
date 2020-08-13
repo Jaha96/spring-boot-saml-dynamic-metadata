@@ -1,5 +1,6 @@
 package com.riskmonster.development.conf;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,10 +11,14 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.github.ulisesbocchio.spring.boot.security.saml.bean.SAMLConfigurerBean;
+import com.riskmonster.development.service.SamlAuthProviderService;
 
 //@EnableWebSecurity
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
+	
+	@Autowired
+	SamlAuthProviderService samlAuthProviderService;
 	
 	@Bean
     SAMLConfigurerBean saml() {
@@ -56,6 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	        .serviceProvider()
 		        .metadataGenerator() //(1)
 		        .entityId("riskmonster-demo")
+		        .includeDiscoveryExtension(false)
+		        .bindingsSLO("redirect")
 		    .and()
 		        .sso() //(2)
 		        .defaultSuccessURL("/home")
@@ -64,10 +71,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		        .logout() //(3)
 		        .defaultTargetURL("/")
 		    .and()
-		        .metadataManager() //(4)
-		        .metadataLocations("classpath:/idp-ssocircle.xml")
-		        .refreshCheckInterval(0)
-		    .and()
+//		        .metadataManager() //(4)
+//		        .metadataLocations("classpath:/idp-ssocircle.xml")
+//		        .refreshCheckInterval(0)
+//		    .and()
+		    	
+		    	.metadataManager(new LocalMetadataManagerAdapter(samlAuthProviderService))
+		    	
 		        .extendedMetadata() //(5)
 		        .idpDiscoveryEnabled(true)
 		    .and()
