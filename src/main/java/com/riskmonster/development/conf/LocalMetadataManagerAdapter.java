@@ -31,13 +31,14 @@ public class LocalMetadataManagerAdapter extends CachingMetadataManager {
         // which is then referenced in application.properties as saml.sso.idp.metadata-location=classpath:/saml/idp-metadata.xml
         if("defaultidpmetadata".equals(entityID)) {
         	System.out.println("Jaha. Unable to process requests for default idp. Please select idp with ?idp=x parameter.");
-//            throw exNotFound("Unable to process requests for default idp. Please select idp with ?idp=x parameter.");
+//            exNotFound("Unable to process requests for default idp. Please select idp with ?idp=x parameter.");
+            throw new MetadataProviderException("Unable to process requests for default idp. Please select idp with ?idp=x parameter.");
         }
 
-//        EntityDescriptor staticEntity = super.getEntityDescriptor(entityID);
-//
-//        if(staticEntity != null)
-//            return staticEntity;
+        EntityDescriptor staticEntity = super.getEntityDescriptor(entityID);
+
+        if(staticEntity != null)
+            return staticEntity;
 
         // we need to inject one, and try again:
         injectProviderMetadata(entityID);
@@ -61,5 +62,5 @@ public class LocalMetadataManagerAdapter extends CachingMetadataManager {
         // this will force a refresh/re-wrap of the new entity
         super.refreshMetadata();
     }
-
+    
 }

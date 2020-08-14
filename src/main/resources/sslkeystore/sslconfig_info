@@ -1,0 +1,30 @@
+
+#https://www.baeldung.com/spring-boot-https-self-signed-certificate
+
+For generating our keystore in a JKS format, we can use the following command:
+
+keytool -genkeypair -alias riskmonster -keyalg RSA -keysize 2048 -keystore riskmonster.jks -validity 3650
+-password: 
+
+
+It is recommended to use the PKCS12 format which is an industry standard format. 
+So in case we already have a JKS keystore, we can convert it to PKCS12 format using the following command:
+
+keytool -importkeystore -srckeystore riskmonster.jks -destkeystore riskmonster.p12 -deststoretype pkcs12
+
+
+
+
+Now, we'll configure the SSL related properties:
+
+# The format used for the keystore. It could be set to JKS in case it is a JKS file
+server.ssl.key-store-type=PKCS12
+# The path to the keystore containing the certificate
+server.ssl.key-store=classpath:keystore/baeldung.p12
+# The password used to generate the certificate
+server.ssl.key-store-password=password
+# The alias mapped to the certificate
+server.ssl.key-alias=riskmonster
+Since we are using Spring Security enabled application, let's configure it to accept only HTTPS requests:
+
+server.ssl.enabled=true

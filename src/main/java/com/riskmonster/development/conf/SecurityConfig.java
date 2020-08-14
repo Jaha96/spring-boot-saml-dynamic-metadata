@@ -20,6 +20,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Autowired
 	SamlAuthProviderService samlAuthProviderService;
 	
+	@Autowired
+	SamlAuthenticationSuccessHandler samlAuthSuccessHandler;
+	
 	@Bean
     SAMLConfigurerBean saml() {
         return new SAMLConfigurerBean();
@@ -65,20 +68,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		        .bindingsSLO("redirect")
 		    .and()
 		        .sso() //(2)
-		        .defaultSuccessURL("/home")
+//		        .defaultSuccessURL("/home")
+		        
+//		        .successHandler(new SendToSuccessUrlPostAuthSuccessHandler(canvasAuthService))
 //		        .idpSelectionPageURL("/idpselection")
-		    .and()
-		        .logout() //(3)
-		        .defaultTargetURL("/")
-		    .and()
-//		        .metadataManager() //(4)
-//		        .metadataLocations("classpath:/idp-ssocircle.xml")
-//		        .refreshCheckInterval(0)
 //		    .and()
-		    	
+//		        .logout() //(3)
+//		        .defaultTargetURL("/")
+		        .successHandler(samlAuthSuccessHandler)
+		    .and()
 		    	.metadataManager(new LocalMetadataManagerAdapter(samlAuthProviderService))
 		        .extendedMetadata() //(5)
-		        .idpDiscoveryEnabled(true)
+		        .idpDiscoveryEnabled(false)
 		    .and()
 		        .keyManager() //(6)
 		        .privateKeyDERLocation("classpath:/localhost.key.der")
@@ -87,11 +88,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.http()
 				    .authorizeRequests()
 				    .requestMatchers(saml().endpointsMatcher())
-				    .permitAll()
-			.and()
-			    .authorizeRequests()
-			    .regexMatchers("/")
-			    .permitAll();
+				    .permitAll();
+//			.and()
+//			    .authorizeRequests()
+//			    .regexMatchers("/")
+//			    .permitAll();
     
 	}
+	
+	
 }

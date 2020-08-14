@@ -90,7 +90,10 @@ public class SamlAuthServiceImpl implements SamlAuthProviderService{
 				"    </IDPSSODescriptor>\r\n" + 
 				"</EntityDescriptor>\r\n" + 
 				"";
-		return xml;
+		if ("http://idp.ssocircle.com".equals(entityID))
+			return xml;
+		
+		return "";
 	}
 
 }
