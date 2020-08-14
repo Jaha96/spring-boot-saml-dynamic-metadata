@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		    .and()
 		        .sso() //(2)
 		        .defaultSuccessURL("/home")
-		        .idpSelectionPageURL("/idpselection")
+//		        .idpSelectionPageURL("/idpselection")
 		    .and()
 		        .logout() //(3)
 		        .defaultTargetURL("/")
@@ -77,7 +77,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 //		    .and()
 		    	
 		    	.metadataManager(new LocalMetadataManagerAdapter(samlAuthProviderService))
-		    	
 		        .extendedMetadata() //(5)
 		        .idpDiscoveryEnabled(true)
 		    .and()
