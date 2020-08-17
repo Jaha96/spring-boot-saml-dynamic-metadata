@@ -7,10 +7,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.saml.websso.WebSSOProfileConsumer;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.github.ulisesbocchio.spring.boot.security.saml.bean.SAMLConfigurerBean;
+import com.github.ulisesbocchio.spring.boot.security.saml.bean.override.DSLWebSSOProfileConsumerImpl;
 import com.riskmonster.development.service.SamlAuthProviderService;
 
 //@EnableWebSecurity
@@ -44,12 +46,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	    }
 	}
-    
+
+
     //Needed in some cases to prevent infinite loop 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.parentAuthenticationManager(null);
     }
+    
+    private WebSSOProfileConsumer customWebSSOProfileConsumer() {
+    	DSLWebSSOProfileConsumerImpl consumer = new DSLWebSSOProfileConsumerImpl();
+    	consumer.setMaxAuthenticationAge(26000000); //300 days
+    	return consumer;
+    }
+    
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -63,10 +73,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	    .apply(saml())
 	        .serviceProvider()
 		        .metadataGenerator() //(1)
-		        .entityId("riskmonster-demo")
+		        .entityId("riskmonster-https-demo")
 		        .includeDiscoveryExtension(false)
 		        .bindingsSLO("redirect")
 		    .and()
+		    	.ssoProfileConsumer(customWebSSOProfileConsumer())
 		        .sso() //(2)
 //		        .defaultSuccessURL("/home")
 		        
