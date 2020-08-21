@@ -21,10 +21,14 @@ public class SamlAuthServiceImpl implements SamlAuthProviderService {
 	public String getMetadataForConnection(String entityID) {
 //		Bring XML Data from DB here
 		if ("http://idp.ssocircle.com".equals(entityID))
-			return XMLtoString("classpath:idp-metadata-backup.xml");
+			return XMLtoString("classpath:idp-ssocircle.xml");
 
 		if ("https://sts.windows.net/53bf0138-a54b-4cec-90c6-0dfee29fed3e/".equals(entityID))
 			return XMLtoString("classpath:azure-saml-app-test.xml");
+		
+		if ("http://www.okta.com/exkqbohppTmU9ZXFM4x6".equals(entityID))
+//			http://www.okta.com/exkqbohppTmU9ZXFM4x6
+			return XMLtoString("classpath:idp-okta.xml");
 
 		return "";
 	}

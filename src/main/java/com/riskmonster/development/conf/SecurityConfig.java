@@ -7,6 +7,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.saml.context.SAMLContextProviderImpl;
+import org.springframework.security.saml.storage.EmptyStorageFactory;
 import org.springframework.security.saml.websso.WebSSOProfileConsumer;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -60,6 +62,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     	return consumer;
     }
     
+    private SAMLContextProviderImpl contextProvider() {
+    	SAMLContextProviderImpl contextProvider = new SAMLContextProviderImpl();
+    	contextProvider.setStorageFactory(new EmptyStorageFactory());
+    	return contextProvider;
+    }
+    
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -74,37 +82,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	        .serviceProvider()
 		        .metadataGenerator() //(1)
 		        .entityId("riskmonster-https-demo")
-		        .includeDiscoveryExtension(false)
+		        .includeDiscoveryExtension(true)
 		        .bindingsSLO("redirect")
 		    .and()
+		    	.samlContextProvider(contextProvider())
 		    	.ssoProfileConsumer(customWebSSOProfileConsumer())
 		        .sso() //(2)
-//		        .defaultSuccessURL("/home")
-		        
 //		        .successHandler(new SendToSuccessUrlPostAuthSuccessHandler(canvasAuthService))
-//		        .idpSelectionPageURL("/idpselection")
+		        .successHandler(samlAuthSuccessHandler)
 //		    .and()
 //		        .logout() //(3)
 //		        .defaultTargetURL("/")
-		        .successHandler(samlAuthSuccessHandler)
+		        
 		    .and()
 		    	.metadataManager(new LocalMetadataManagerAdapter(samlAuthProviderService))
 		        .extendedMetadata() //(5)
 		        .idpDiscoveryEnabled(false)
 		    .and()
 		        .keyManager() //(6)
-		        .privateKeyDERLocation("classpath:/localhost.key.der")
-		        .publicKeyPEMLocation("classpath:/localhost.cert")
+//		        .privateKeyDERLocation("classpath:/localhost.key.der")
+//		        .publicKeyPEMLocation("classpath:/localhost.cert")
+		        .storeLocation("classpath:sslkeystore/riskmonster.jks")
+		        .storePass("password")
+		        .defaultKey("riskmonster")
+		        .keyPassword("riskmonster", "password")
 	        .and()
 				.http()
 				    .authorizeRequests()
 				    .requestMatchers(saml().endpointsMatcher())
 				    .permitAll();
-//			.and()
-//			    .authorizeRequests()
-//			    .regexMatchers("/")
-//			    .permitAll();
-    
 	}
 	
 	
