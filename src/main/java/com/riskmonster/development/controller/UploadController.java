@@ -172,8 +172,7 @@ public class UploadController {
 	}
 
 	private void writeToCsv(String companyId, String entityId, Path xmlPath) throws IOException {
-		String csv = "data.csv";
-		Path certpath = Paths.get(UPLOADED_FOLDER + csv);
+		Path certpath = Paths.get(CommonValues.CSV_DB);
 		
 		CSVWriter writer = new CSVWriter(new FileWriter(certpath.toString(), true));
 	    
