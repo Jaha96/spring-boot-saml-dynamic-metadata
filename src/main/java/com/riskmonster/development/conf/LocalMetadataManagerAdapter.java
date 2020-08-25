@@ -30,7 +30,6 @@ public class LocalMetadataManagerAdapter extends CachingMetadataManager {
         // this string value is defined in the "classpath:/saml/idp-metadata.xml" file:
         // which is then referenced in application.properties as saml.sso.idp.metadata-location=classpath:/saml/idp-metadata.xml
         if("defaultidpmetadata".equals(entityID)) {
-        	System.out.println("Jaha. Unable to process requests for default idp. Please select idp with ?idp=x parameter.");
 //            exNotFound("Unable to process requests for default idp. Please select idp with ?idp=x parameter.");
             throw new MetadataProviderException("Unable to process requests for default idp. Please select idp with ?idp=x parameter.");
         }

@@ -157,7 +157,6 @@ input[type=submit]:hover {
 <body>
 
 <div class="container">
-  <form action="/action_page.php">
     <div class="row">
       <h2 style="text-align:center">Login with Azure AD or Manually</h2>
       <div class="vl">
@@ -165,12 +164,20 @@ input[type=submit]:hover {
       </div>
 
       <div class="col">
-      	<a th:href="@{/saml/login?idp=https://sts.windows.net/53bf0138-a54b-4cec-90c6-0dfee29fed3e/}" class="microsoft btn">
+      <form th:id="samlloginform" th:action="@{/loginwithsaml}" method="post">
+		    <input type="text" name="companyId" placeholder="Company ID" required>
+	       	<a href="#" onclick="document.getElementById('samlloginform').submit()" class="microsoft btn">
+	          <img class="microsoft-icon" src="../static/microsoft.svg" th:src="@{microsoft.svg}"/> Sign in with Microsoft
+	        </a>
+		</form>
+<!--       	<a th:href="@{/saml/login?idp=https://sts.windows.net/53bf0138-a54b-4cec-90c6-0dfee29fed3e/}" class="microsoft btn">
           <img class="microsoft-icon" src="../static/microsoft.svg" th:src="@{microsoft.svg}"/> Sign in with Microsoft
-        </a>
+        </a> -->
+         
       </div>
 
       <div class="col">
+      <form action="#">
         <div class="hide-md-lg">
           <p>Or sign in manually:</p>
         </div>
@@ -178,10 +185,12 @@ input[type=submit]:hover {
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <input type="submit" value="Login">
+        
+        </form>
       </div>
       
     </div>
-  </form>
+  
 </div>
 
 <div class="bottom-container">
